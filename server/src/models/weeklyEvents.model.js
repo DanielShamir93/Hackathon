@@ -22,6 +22,22 @@ const weeklyEventsSchema = new mongoose.Schema({
     type: [],
     default: ["International"],
     trim: true
+  },
+  content: {
+    wiki: {
+      summery: {
+        type: String,
+        trim: true
+      },
+      url: {
+        type: String,
+        trim: true
+      }
+    },
+    youtubeUrl: {
+      type: String,
+      trim: true
+    }
   }
 });
 

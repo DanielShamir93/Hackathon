@@ -2,9 +2,12 @@ import React, { useState, useEffect }  from 'react';
 import './Homepage.css';
 import Button from "../../components/Button/Button";
 import Card from "../../components/Card/Card";
+import axios from "axios";
+import myApi from '../../api/api';
 
 function Homepage() {
     const test = [
+
       {
         fullDate: { date: 'Jan 30', day: 'Sunday' },
         title: 'The Three Holy Hierarchs',
@@ -379,7 +382,27 @@ function Homepage() {
         countries: [ 'New Zealand' ],
         content: { wiki: [Object] }
       }
-    ];   
+    ];  
+
+      useEffect(() => {
+        const getData = async () => {
+          try {
+            const res = await myApi.get('getWeeklyEvents');
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        getData();
+      
+        // return () => {
+        //   second;
+        // };
+      }, []);
+      
+    
+
     
       const [holiday, setHoliday] = useState(test);
       const [dateArr, setDateArr] = useState([]);
