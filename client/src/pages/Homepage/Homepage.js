@@ -1,7 +1,7 @@
 import React, { useState }  from 'react';
 import './Homepage.css';
-import Button from "./components/Button/Button";
-import Card from "./components/Card/Card";
+import Button from "../../components/Button/Button";
+import Card from "../../components/Card/Card";
 
 function Homepage() {
     const test = [
@@ -29,8 +29,10 @@ function Homepage() {
     
     
       const [holiday, setHoliday] = useState(test);
+      const [text, setText] = useState('Card');
     
       const handleClick = (event) => {
+        setText(`we clicked on ${event}`);
         console.log(`we clicked on ${event}`);
       }
     
@@ -44,7 +46,7 @@ function Homepage() {
         //! need to see what are the keys in the obj we get from the back.
         return holiday.map(item => {
           return (
-            <Button handleClick={() => handleClick(item.event)} btnText={item.event} classBtn="btn" />
+            <Button handleClick={() => handleClick(item.event)} btnText={item.event} classBtn="holiday" />
           );
         });
       }
@@ -69,11 +71,11 @@ function Homepage() {
     
     
       return (
-        <div className="container">
+        <div className="homepage">
           <div className="week-dates">{displayDates()}</div>
           <div className="info">
-            <Card />
             <div className="holidays">{displayHoliday()}</div>
+            <Card text={text}/>
           </div>
         </div>
       );
