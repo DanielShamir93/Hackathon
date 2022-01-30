@@ -1,9 +1,17 @@
+/* fonts */
+@font-face {
+  font-family: DIVERSITY;
+  src: url("./fonts/DIVERSITY.woff");
+}
+
 body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100vh; */
+  height: 90vh;
+  /* font-family: DIVERSITY; */
 }
+
 .container {
   /* margin: 2rem; */
   display: flex;
