@@ -85,7 +85,7 @@ function App() {
   // );
   return (
     <div className="container">
-      app
+      <About/>
     </div>
   );
 }

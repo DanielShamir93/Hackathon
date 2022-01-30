@@ -1,7 +1,7 @@
 import React, { useState }  from 'react';
 import './Homepage.css';
-import Button from "./components/Button/Button";
-import Card from "./components/Card/Card";
+import Button from "../../components/Button/Button";
+import Card from "../../components/Card/Card";
 
 function Homepage() {
     const test = [
