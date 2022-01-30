@@ -1,5 +1,5 @@
 // require("./db/mongoose");
-// const puppeteerRouter = require("./routes/puppeteer/puppeteer.router");
+require("./middleware/scraper/weeklyEvents");
 const express = require("express");
 const cors = require("cors");
 const path = require('path');
@@ -16,11 +16,10 @@ app.use(cors());
 // Routers
 // app.use("/hackathon", puppeteerRouter);
 
-require("./middleware/scraper/puppeteer");
-
 app.all('*', (req, res) => {
   res.sendFile(path.resolve(publicPath, 'index.html'));
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running at ${PORT}`);

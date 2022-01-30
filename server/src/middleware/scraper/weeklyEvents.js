@@ -22,7 +22,8 @@ const grabWeeklyEvents = async (req, res) => {
         // For each cell extract its content
         if (rowObject.length === ROW_WITH_DATE_LENGTH && j === FIRST_CONTENT_CELL) {
           // A row with date and first cell (date)
-          eventDate = rowObject.item(0).innerText;
+          eventDate = {date: rowObject.item(0).innerText, day: rowObject.item(1).innerText};
+          j++;
         }
         let content = rowObject.item(j).innerText;
 
@@ -40,5 +41,7 @@ const grabWeeklyEvents = async (req, res) => {
 
   // res.send(rawData);
 };
-// cron.schedule('*/5 * * * * *', grabWeeklyEvents);
+
+grabWeeklyEvents();
+// cron.schedule('*/60 * * * * *', grabWeeklyEvents);
 
