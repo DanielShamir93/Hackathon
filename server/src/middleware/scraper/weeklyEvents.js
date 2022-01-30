@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const cron = require('node-cron');
+const cron = require("node-cron");
 const weeklyEventsModel = require("../../models/weeklyEvents.model");
 
 const grabWeeklyEvents = async (req, res) => {
@@ -22,9 +22,15 @@ const grabWeeklyEvents = async (req, res) => {
       const values = [];
       for (let j = 1; j < rowObject.length; j++) {
         // For each cell extract its content
-        if (rowObject.length === ROW_WITH_DATE_LENGTH && j === FIRST_CONTENT_CELL) {
+        if (
+          rowObject.length === ROW_WITH_DATE_LENGTH &&
+          j === FIRST_CONTENT_CELL
+        ) {
           // A row with date and first cell (date)
-          eventDate = {date: rowObject.item(0).innerText, day: rowObject.item(1).innerText};
+          eventDate = {
+            date: rowObject.item(0).innerText,
+            day: rowObject.item(1).innerText,
+          };
           j++;
         }
         let content = rowObject.item(j).innerText;
@@ -38,46 +44,47 @@ const grabWeeklyEvents = async (req, res) => {
     return data;
   });
   // console.log(rawData)
-  await insertData(rawData);
+  await insertFirstData(rawData);
 
   await browser.close();
 
   // res.send(rawData);
 };
 
-grabWeeklyEvents();
-// cron.schedule('*/60 * * * * *', grabWeeklyEvents);
-
-
-const insertData = async (rawData) => {
+const insertFirstData = async (rawData) => {
   try {
-
     const dataArray = await weeklyEventsModel.find();
 
-
     if (dataArray.length > 0) {
-      
+
+
+
     } else {
-
       const weeklyEventsArray = rawData.map((dayEvent) => {
-
-        console.log(dayEvent.values[1].split(",").map((country) => country.trim()));
-
-
         return {
           fullDate: {
             date: dayEvent.eventDate.date,
-            day: dayEvent.eventDate.day
+            day: dayEvent.eventDate.day,
           },
           title: dayEvent.values[0],
-          countries: dayEvent.values[1].split(",").map((country) => country.trim())
+          countries: dayEvent.values[1]
+            .split(",")
+            .map((country) => country.trim()),
         };
       });
-      
-      weeklyEventsModel.insertMany(weeklyEventsArray);
-    }
 
+      weeklyEventsModel.insertMany(weeklyEventsArray);
+
+      await insertSecondData(weeklyEventsArray)
+    }
   } catch (err) {
     console.log(err.message);
   }
+};
+
+const insertSecondData = async () => {
+
 }
+
+grabWeeklyEvents();
+// cron.schedule('*/60 * * * * *', grabWeeklyEvents);
