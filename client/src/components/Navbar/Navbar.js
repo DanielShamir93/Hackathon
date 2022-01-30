@@ -6,11 +6,12 @@ export default class Navbar extends Component {
     render() {
         return (
             <header className="navbar">
-                <Link className="navbar--link" to="/">Homepage</Link>
-                <div>
-                    <button className="navbar--btn">Language</button>
-                    <Link className="navbar--link" to="/about">About</Link>
+                <div className="navbar--left">
+                    <div className="navbar-logo"></div>
+                    <Link className="navbar--link" to="/">Homepage</Link>
                 </div>
+                <Link className="navbar--link" to="/about">About</Link>
+
             </header>
         )
     }

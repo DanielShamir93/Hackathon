@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(46, 46, 46, 0.781);
+  background: rgb(46, 46, 46);
   width: 100vw;
   position: fixed;
   top: 0;
@@ -34,4 +34,15 @@
 
 .navbar--btn:hover {
   background: rgba(75, 75, 75, 0.418);
+}
+
+.navbar-logo {
+  background: url("./img/CO-EVENT-LOGO.png") no-repeat center center/cover;
+  height: 5rem;
+  width: 7rem;
+}
+
+.navbar--left {
+  display: flex;
+  margin: 0 1rem;
 }
