@@ -1,7 +1,9 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import './Homepage.css';
 import Button from "../../components/Button/Button";
 import Card from "../../components/Card/Card";
+import axios from "axios";
+import myApi from '../../api/api';
 
 function Homepage() {
     const test = [
@@ -26,6 +28,24 @@ function Homepage() {
           date: "",
         },
       ];
+
+      useEffect(() => {
+        const getData = async () => {
+          try {
+            const res = await myApi.get('getWeeklyEvents');
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        getData();
+      
+        // return () => {
+        //   second;
+        // };
+      }, []);
+      
     
     
       const [holiday, setHoliday] = useState(test);
