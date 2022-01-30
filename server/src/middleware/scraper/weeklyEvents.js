@@ -53,66 +53,80 @@ const grabWeeklyEvents = async (req, res) => {
 
 const organizeData = async (rawData) => {
   try {
-    const dataArray = await weeklyEventsModel.find();
-
-    if (dataArray.length > 0) {
-    } else {
-      const weeklyEventsArray = rawData.map((dayEvent) => {
-        return {
-          fullDate: {
-            date: dayEvent.eventDate.date,
-            day: dayEvent.eventDate.day,
-          },
-          title: dayEvent.values[0],
-          countries: dayEvent.values[1]
-            .split(",")
-            .map((country) => country.trim()),
-        };
-      });
-
-      // weeklyEventsModel.insertMany(weeklyEventsArray);
-      grabContent(weeklyEventsArray);
-    }
+    await weeklyEventsModel.deleteMany({});
+    const weeklyEventsArray = rawData.map((dayEvent) => {
+      return {
+        fullDate: {
+          date: dayEvent.eventDate.date,
+          day: dayEvent.eventDate.day,
+        },
+        title: dayEvent.values[0],
+        countries: dayEvent.values[1]
+          .split(",")
+          .map((country) => country.trim()),
+        content: { wiki: { summery: "", url: "" } },
+      };
+    });
+    weeklyEventsModel.insertMany(weeklyEventsArray);
+    grabContent(weeklyEventsArray);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const grabContent = async (weeklyEventsArray) => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto("https://www.wikipedia.org/");
+const getSelector = async (page, selector) => await page.$(selector);
+const getInnerText = async (element) =>
+  await (await element.getProperty("innerText")).jsonValue();
 
+const grabContent = async (weeklyEventsArray) => {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
 
   for (let dayEvent of weeklyEventsArray) {
+    await page.goto("https://www.wikipedia.org/");
     const { title } = dayEvent;
-
     await page.type("#search-input", title);
+    await page.waitForTimeout(3000);
     await page.click(".pure-button.pure-button-primary-progressive");
+    await page.waitForTimeout(3000);
+    const elementPath =
+    "#mw-content-text > div.mw-parser-output > p:nth-child(4)";
+    const summery = await getSelector(page, elementPath);
+    if (!summery) return "Summery Failed";
+    const rawData = await getInnerText(summery);
+    const url = await page.url();
 
-    const rawData = await page.evaluate(() => {
-      const summery = document.querySelector("#mw-content-text > div.mw-parser-output > p:nth-child(4)");
-      return summery.innerText;
-    }, []);
+    console.log(url);
     
-    dayEvent.content = {};
-    dayEvent.content.wiki = {};
     dayEvent.content.wiki.summery = rawData;
+    dayEvent.content.wiki.url = url;
+    console.log(dayEvent.content.wiki)
+
   }
-
-  console.log(weeklyEventsArray[0].content.wiki);
-
+  console.log(weeklyEventsArray);
   await browser.close();
-}
+};
 
-const array = [{
-  fullDate: {
-    date: "Jan 30",
-    day: "Sunday"
+const array = [
+  {
+    fullDate: {
+      date: "Jan 30",
+      day: "Sunday",
+    },
+    title: "The Three Holy Hierarchs",
+    countries: ["Greece"],
+    content: { wiki: { summery: "", url: "" } },
   },
-  title: "The Three Holy Hierarchs",
-  countries: ["Greece"]
-}]
+  {
+    fullDate: {
+      date: "Jan 10",
+      day: "Monday",
+    },
+    title: "The Three Holy Hierarchs",
+    countries: ["US"],
+    content: { wiki: { summery: "", url: "" } },
+  },
+];
 
 grabContent(array);
 
