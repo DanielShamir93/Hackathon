@@ -6,7 +6,7 @@ import "./App.css";
 import About from "./pages/About/About";
 import Homepage from "./pages/Homepage/Homepage";
 import NoMatch from "./pages/NoMatch/NoMatch";
-import Header from './components/Header/Header'
+import Navbar from './components/Navbar/Navbar'
 
 function App() {
 
@@ -14,7 +14,7 @@ function App() {
     <div className="container">
         <BrowserRouter>
           <div>
-            <Header />
+            <Navbar />
             <Switch>
               <Route path="/" exact component={Homepage} />
               <Route path="/about" exact component={About} />
