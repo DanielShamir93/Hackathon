@@ -4,13 +4,14 @@ import './About.css';
 function About() {
   return (<div className="about">
     <div className="grid-container">
-      {/* <ul className="about--text box-1">
+      <ul className="about--text box-1">
         <li>{"Every week comes with multiple events from mixed cultures & religions."}</li>
         <li>{"Our website explains you every single event in details & with relevant information including a video-describing the traditional way of celebrating the event."}</li>
-      </ul> */}
-      <div className="about--text box-1">{"Every week comes with multiple events from mixed cultures & religions.\nOur website explains you every single event in details & with relevant information including a video-describing the traditional way of celebrating the event."}</div>
+      </ul>
+      {/* <div className="about--text box-1">{"Every week comes with multiple events from mixed cultures & religions.\nOur website explains you every single event in details & with relevant information including a video-describing the traditional way of celebrating the event."}</div> */}
       <div class="box box-2"></div>
       <div class="box box-3"></div>
+      <div class="box box-15"></div>
       <div class="box box-4"></div>
       <div class="box box-5"></div>
       <div class="box box-6"></div>
