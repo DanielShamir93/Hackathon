@@ -43,22 +43,19 @@ const grabWeeklyEvents = async (req, res) => {
 
     return data;
   });
-  // console.log(rawData)
-  await insertFirstData(rawData);
+
+  await organizeData(rawData);
 
   await browser.close();
 
   // res.send(rawData);
 };
 
-const insertFirstData = async (rawData) => {
+const organizeData = async (rawData) => {
   try {
     const dataArray = await weeklyEventsModel.find();
 
     if (dataArray.length > 0) {
-
-
-
     } else {
       const weeklyEventsArray = rawData.map((dayEvent) => {
         return {
@@ -73,18 +70,45 @@ const insertFirstData = async (rawData) => {
         };
       });
 
-      weeklyEventsModel.insertMany(weeklyEventsArray);
-
-      await insertSecondData(weeklyEventsArray)
+      // weeklyEventsModel.insertMany(weeklyEventsArray);
+      grabContent(weeklyEventsArray);
     }
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const insertSecondData = async () => {
+const grabContent = async (weeklyEventsArray) => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto("https://www.wikipedia.org/");
 
+  for (dayEvent of weeklyEventsArray) {
+    const { title } = dayEvent;
+    await page.type("#search-input", title);
+    await page.click(".pure-button.pure-button-primary-progressive");
+
+    const rawData = await page.evaluate(() => {
+      const summery = document.querySelector("#mw-content-text > div.mw-parser-output > p:nth-child(4)");
+      return summery.innerText;
+    });
+
+    console.log(rawData);
+  }
+
+  await browser.close();
 }
 
-grabWeeklyEvents();
+const array = [{
+  fullDate: {
+    date: "Jan 30",
+    day: "Sunday"
+  },
+  title: "The Three Holy Hierarchs",
+  countries: ["Greece"]
+}]
+
+grabContent(array);
+
+// grabWeeklyEvents();
 // cron.schedule('*/60 * * * * *', grabWeeklyEvents);
