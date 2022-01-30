@@ -83,18 +83,24 @@ const grabContent = async (weeklyEventsArray) => {
   const page = await browser.newPage();
   await page.goto("https://www.wikipedia.org/");
 
-  for (dayEvent of weeklyEventsArray) {
+
+  for (let dayEvent of weeklyEventsArray) {
     const { title } = dayEvent;
+
     await page.type("#search-input", title);
     await page.click(".pure-button.pure-button-primary-progressive");
 
     const rawData = await page.evaluate(() => {
       const summery = document.querySelector("#mw-content-text > div.mw-parser-output > p:nth-child(4)");
       return summery.innerText;
-    });
-
-    console.log(rawData);
+    }, []);
+    
+    dayEvent.content = {};
+    dayEvent.content.wiki = {};
+    dayEvent.content.wiki.summery = rawData;
   }
+
+  console.log(weeklyEventsArray[0].content.wiki);
 
   await browser.close();
 }
