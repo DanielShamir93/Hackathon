@@ -6,8 +6,7 @@
   width: 100vw;
   min-height: 100vh;
   background: rgba(203, 224, 231, 0.979);
-  padding: 2rem;
-  padding-top: 4.5rem;
+  padding: 7rem 2rem 0rem 2rem;
 }
 
 .week-dates {
