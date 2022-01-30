@@ -5,7 +5,7 @@ const Button = ({ handleClick, btnText, classBtn }) => {
   return (
     <div className="btn-container">
       <button
-        className={classBtn}
+        className={`btn-${classBtn}`}
         onClick={handleClick}
       >
         {btnText}

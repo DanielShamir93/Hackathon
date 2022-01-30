@@ -1,29 +1,32 @@
-.btn {
+.btn-holiday {
   cursor: pointer;
   margin: 1rem;
   padding: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  background: #5cffc9e7;
-  border: 0.2rem solid #318858;
+  background: #bee2ff;
+  border: 0.2rem solid rgba(11, 0, 59, 0.906);
   border-radius: 1rem;
   color: black;
 }
 
-.btn:hover {
-  background: #00ce89e7;
+.btn-holiday:hover {
+  background: #5c9dffc0;
 }
 
-.date {
-  margin: 0.5rem;
-  padding: 0.5rem;
-  border: 0.1rem red solid;
-  border-radius: 1rem;
+.btn-date {
   cursor: pointer;
-  font-size: 1.5rem;
+  margin: 1rem;
+  padding: 1rem;
+  font-size: 2rem;
   font-weight: bold;
+  background: #010050ea;
+  border: 0.2rem solid #4b4b4bc0;
+  border-radius: 1rem;
+  color: rgb(219, 219, 219);
 }
 
-.date:hover {
-  background: #ffc5e5e7;
+.btn-date:hover {
+  background: #5c9dffc0;
+  color: black;
 }

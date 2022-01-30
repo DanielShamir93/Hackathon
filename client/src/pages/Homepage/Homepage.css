@@ -1,3 +1,14 @@
+.homepage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  background: rgba(203, 224, 231, 0.979);
+  padding: 2rem;
+}
+
 .week-dates {
   display: flex;
   flex-wrap: wrap;
@@ -11,4 +22,5 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 3rem;
 }
