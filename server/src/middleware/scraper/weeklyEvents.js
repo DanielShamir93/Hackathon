@@ -1,16 +1,18 @@
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const weeklyEventsModel = require("../../models/weeklyEvents.model");
+const getSelector = async (page, selector) => await page.$(selector);
+const getSelectorAll = async (page, selector) => await page.$$(selector);
 
 const grabWeeklyEvents = async (req, res) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://www.timeanddate.com/holidays/");
 
-  const rawData = await page.evaluate(() => {
+  const rawData = await page.evaluate(async () => {
     const ROW_WITH_DATE_LENGTH = 4;
     const FIRST_CONTENT_CELL = 1;
-    let data = [];
+    const data = [];
     let table = document.querySelector(
       "body > div.main-content-div > div.main-content-div > main > div > section > article.table-data > section > table > tbody"
     );
@@ -43,15 +45,15 @@ const grabWeeklyEvents = async (req, res) => {
 
     return data;
   });
+  console.log("test1");
 
   await organizeData(rawData);
 
   await browser.close();
-
-  // res.send(rawData);
 };
 
 const organizeData = async (rawData) => {
+  console.log("test2");
   try {
     await weeklyEventsModel.deleteMany({});
     const weeklyEventsArray = rawData.map((dayEvent) => {
@@ -67,68 +69,63 @@ const organizeData = async (rawData) => {
         content: { wiki: { summery: "", url: "" } },
       };
     });
-    weeklyEventsModel.insertMany(weeklyEventsArray);
     grabContent(weeklyEventsArray);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const getSelector = async (page, selector) => await page.$(selector);
 const getInnerText = async (element) =>
   await (await element.getProperty("innerText")).jsonValue();
 
 const grabContent = async (weeklyEventsArray) => {
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
+  try {
+    console.log("test3");
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
 
-  for (let dayEvent of weeklyEventsArray) {
-    await page.goto("https://www.wikipedia.org/");
-    const { title } = dayEvent;
-    await page.type("#search-input", title);
-    await page.waitForTimeout(3000);
-    await page.click(".pure-button.pure-button-primary-progressive");
-    await page.waitForTimeout(3000);
-    const elementPath =
-    "#mw-content-text > div.mw-parser-output > p:nth-child(4)";
-    const summery = await getSelector(page, elementPath);
-    if (!summery) return "Summery Failed";
-    const rawData = await getInnerText(summery);
-    const url = await page.url();
+    for (let dayEvent of weeklyEventsArray) {
+      await page.goto("https://www.wikipedia.org/");
+      const { title } = dayEvent;
+      await page.type("#search-input", title);
+      await page.waitForTimeout(3000);
+      await page.click(".pure-button.pure-button-primary-progressive");
+      await page.waitForTimeout(3000);
+      const url = await page.url();
+      if (url.includes("Search")) {
+        continue;
+      }
+      const elementPath =
+        "#mw-content-text > div.mw-parser-output p";
+      const summeriesArray = await getSelectorAll(page, elementPath);
 
-    console.log(url);
-    
-    dayEvent.content.wiki.summery = rawData;
-    dayEvent.content.wiki.url = url;
-    console.log(dayEvent.content.wiki)
+      if (summeriesArray.length === 0) return "Summery Failed";
 
+      const array = [];
+      for (let i = 0; i < summeriesArray.length; i++) {
+        array.push(await getInnerText(summeriesArray[i]));
+      }
+
+      let parsedSummery = array.join(' ').replace(/(\\n)|\[\d*]|(\/)/g, "")
+
+      console.log(parsedSummery);
+      
+      dayEvent.content.wiki.summery = parsedSummery || "";
+      dayEvent.content.wiki.url = url || "";
+      
+      
+    }
+    console.log(weeklyEventsArray);
+    weeklyEventsModel.insertMany(weeklyEventsArray);
+
+    await browser.close();
+  } catch (err) {
+    console.log(err);
   }
-  console.log(weeklyEventsArray);
-  await browser.close();
 };
 
-const array = [
-  {
-    fullDate: {
-      date: "Jan 30",
-      day: "Sunday",
-    },
-    title: "The Three Holy Hierarchs",
-    countries: ["Greece"],
-    content: { wiki: { summery: "", url: "" } },
-  },
-  {
-    fullDate: {
-      date: "Jan 10",
-      day: "Monday",
-    },
-    title: "The Three Holy Hierarchs",
-    countries: ["US"],
-    content: { wiki: { summery: "", url: "" } },
-  },
-];
 
-grabContent(array);
 
-// grabWeeklyEvents();
+grabWeeklyEvents();
+
 // cron.schedule('*/60 * * * * *', grabWeeklyEvents);
