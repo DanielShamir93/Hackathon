@@ -1,5 +1,5 @@
 require("./db/mongoose");
-require("./middleware/scraper/weeklyEvents");
+// require("./middleware/scraper/weeklyEvents");
 const express = require("express");
 const cors = require("cors");
 const path = require('path');
