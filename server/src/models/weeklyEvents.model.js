@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const weeklyEventsSchema = new mongoose.Schema({
-  event: {
+  fullDate: {
     date: {
       type: String,
       required: true,
@@ -13,14 +13,15 @@ const weeklyEventsSchema = new mongoose.Schema({
       trim: true
     },
   },
-  eventName: {
+  title: {
     type: String,
     required: true,
     trim: true
   },
   countries: {
     type: [],
-    default: ["International"]
+    default: ["International"],
+    trim: true
   }
 });
 

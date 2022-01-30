@@ -52,28 +52,27 @@ grabWeeklyEvents();
 const insertData = async (rawData) => {
   try {
 
-    console.log('test1')
-
     const dataArray = await weeklyEventsModel.find();
 
-    console.log('test2')
 
     if (dataArray.length > 0) {
       
     } else {
-    console.log('test3')
 
       const weeklyEventsArray = rawData.map((dayEvent) => {
+
+        console.log(dayEvent.values[1].split(",").map((country) => country.trim()));
+
+
         return {
-          event: {
+          fullDate: {
             date: dayEvent.eventDate.date,
             day: dayEvent.eventDate.day
           },
-          eventName: dayEvent.values[0],
-          countries: dayEvent.values[1].split(',')
+          title: dayEvent.values[0],
+          countries: dayEvent.values[1].split(",").map((country) => country.trim())
         };
       });
-    console.log(weeklyEventsArray)
       
       weeklyEventsModel.insertMany(weeklyEventsArray);
     }
