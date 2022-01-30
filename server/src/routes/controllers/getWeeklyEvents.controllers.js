@@ -2,7 +2,8 @@ const WeeklyEvents = require("../../models/weeklyEvents.model");
 
 const getWeeklyEvents = async (req, res) => {
   try {
-    const allEvents = await WeeklyEvents.find();
+    const allEvents = await WeeklyEvents.find({});
+    console.log("Event:",allEvents);
     if (allEvents.length === 0) {
       throw new Error("DB is empty");
     }
