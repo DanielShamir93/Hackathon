@@ -1,11 +1,11 @@
 // require("./db/mongoose");
-// const accountsRouter = require("./routes/accounts/accounts.router");
+// const puppeteerRouter = require("./routes/puppeteer/puppeteer.router");
 const express = require("express");
 const cors = require("cors");
 const path = require('path');
 const app = express();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const publicPath = path.join(__dirname, '../..', 'client/build');
 
 app.use(express.static(publicPath));
@@ -14,7 +14,9 @@ app.use(express.json());
 app.use(cors());
 
 // Routers
-// app.use("/hackathon", usersRouter);
+// app.use("/hackathon", puppeteerRouter);
+
+require("./middleware/scraper/puppeteer");
 
 app.all('*', (req, res) => {
   res.sendFile(path.resolve(publicPath, 'index.html'));
