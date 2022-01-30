@@ -1,10 +1,12 @@
 const puppeteer = require("puppeteer");
 const cron = require('node-cron');
+const weeklyEventsModel = require("../../models/weeklyEvents.model");
 
 const grabWeeklyEvents = async (req, res) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://www.timeanddate.com/holidays/");
+
   const rawData = await page.evaluate(() => {
     const ROW_WITH_DATE_LENGTH = 4;
     const FIRST_CONTENT_CELL = 1;
@@ -35,7 +37,8 @@ const grabWeeklyEvents = async (req, res) => {
 
     return data;
   });
-  console.log(rawData);
+  // console.log(rawData)
+  await insertData(rawData);
 
   await browser.close();
 
@@ -45,3 +48,37 @@ const grabWeeklyEvents = async (req, res) => {
 grabWeeklyEvents();
 // cron.schedule('*/60 * * * * *', grabWeeklyEvents);
 
+
+const insertData = async (rawData) => {
+  try {
+
+    console.log('test1')
+
+    const dataArray = await weeklyEventsModel.find();
+
+    console.log('test2')
+
+    if (dataArray.length > 0) {
+      
+    } else {
+    console.log('test3')
+
+      const weeklyEventsArray = rawData.map((dayEvent) => {
+        return {
+          event: {
+            date: dayEvent.eventDate.date,
+            day: dayEvent.eventDate.day
+          },
+          eventName: dayEvent.values[0],
+          countries: dayEvent.values[1].split(',')
+        };
+      });
+    console.log(weeklyEventsArray)
+      
+      weeklyEventsModel.insertMany(weeklyEventsArray);
+    }
+
+  } catch (err) {
+    console.log(err.message);
+  }
+}

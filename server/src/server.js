@@ -1,4 +1,4 @@
-// require("./db/mongoose");
+require("./db/mongoose");
 require("./middleware/scraper/weeklyEvents");
 const express = require("express");
 const cors = require("cors");

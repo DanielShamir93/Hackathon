@@ -13,11 +13,16 @@ const weeklyEventsSchema = new mongoose.Schema({
       trim: true
     },
   },
-  eventDate: {
+  eventName: {
     type: String,
     required: true,
     trim: true
+  },
+  countries: {
+    type: [],
+    default: ["International"]
   }
 });
+
 
 module.exports = mongoose.model("WeeklyEvents", weeklyEventsSchema);
