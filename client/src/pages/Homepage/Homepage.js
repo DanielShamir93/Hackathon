@@ -441,7 +441,7 @@ function Homepage() {
           <div className="week-dates">{displayDates()}</div>
           <div className="info">
             <div className="holidays">{displayHoliday()}</div>
-            <Card text={text}/>
+            <Card text={text} />
           </div>
         </div>
       );
