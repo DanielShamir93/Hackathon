@@ -1,16 +1,18 @@
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const weeklyEventsModel = require("../../models/weeklyEvents.model");
+const getSelector = async (page, selector) => await page.$(selector);
+const getSelectorAll = async (page, selector) => await page.$$(selector);
 
 const grabWeeklyEvents = async (req, res) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://www.timeanddate.com/holidays/");
 
-  const rawData = await page.evaluate(() => {
+  const rawData = await page.evaluate(async () => {
     const ROW_WITH_DATE_LENGTH = 4;
     const FIRST_CONTENT_CELL = 1;
-    let data = [];
+    const data = [];
     let table = document.querySelector(
       "body > div.main-content-div > div.main-content-div > main > div > section > article.table-data > section > table > tbody"
     );
@@ -43,48 +45,87 @@ const grabWeeklyEvents = async (req, res) => {
 
     return data;
   });
-  // console.log(rawData)
-  await insertFirstData(rawData);
+  console.log("test1");
+
+  await organizeData(rawData);
 
   await browser.close();
-
-  // res.send(rawData);
 };
 
-const insertFirstData = async (rawData) => {
+const organizeData = async (rawData) => {
+  console.log("test2");
   try {
-    const dataArray = await weeklyEventsModel.find();
-
-    if (dataArray.length > 0) {
-
-
-
-    } else {
-      const weeklyEventsArray = rawData.map((dayEvent) => {
-        return {
-          fullDate: {
-            date: dayEvent.eventDate.date,
-            day: dayEvent.eventDate.day,
-          },
-          title: dayEvent.values[0],
-          countries: dayEvent.values[1]
-            .split(",")
-            .map((country) => country.trim()),
-        };
-      });
-
-      weeklyEventsModel.insertMany(weeklyEventsArray);
-
-      await insertSecondData(weeklyEventsArray)
-    }
+    await weeklyEventsModel.deleteMany({});
+    const weeklyEventsArray = rawData.map((dayEvent) => {
+      return {
+        fullDate: {
+          date: dayEvent.eventDate.date,
+          day: dayEvent.eventDate.day,
+        },
+        title: dayEvent.values[0],
+        countries: dayEvent.values[1]
+          .split(",")
+          .map((country) => country.trim()),
+        content: { wiki: { summery: "", url: "" } },
+      };
+    });
+    grabContent(weeklyEventsArray);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const insertSecondData = async () => {
+const getInnerText = async (element) =>
+  await (await element.getProperty("innerText")).jsonValue();
 
-}
+const grabContent = async (weeklyEventsArray) => {
+  try {
+    console.log("test3");
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    for (let dayEvent of weeklyEventsArray) {
+      await page.goto("https://www.wikipedia.org/");
+      const { title } = dayEvent;
+      await page.type("#search-input", title);
+      await page.waitForTimeout(3000);
+      await page.click(".pure-button.pure-button-primary-progressive");
+      await page.waitForTimeout(3000);
+      const url = await page.url();
+      if (url.includes("Search")) {
+        continue;
+      }
+      const elementPath =
+        "#mw-content-text > div.mw-parser-output p";
+      const summeriesArray = await getSelectorAll(page, elementPath);
+
+      if (summeriesArray.length === 0) return "Summery Failed";
+
+      const array = [];
+      for (let i = 0; i < summeriesArray.length; i++) {
+        array.push(await getInnerText(summeriesArray[i]));
+      }
+
+      let parsedSummery = array.join(' ').replace(/(\\n)|\[\d*]|(\/)/g, "")
+
+      console.log(parsedSummery);
+      
+      dayEvent.content.wiki.summery = parsedSummery || "";
+      dayEvent.content.wiki.url = url || "";
+      
+      
+    }
+    console.log(weeklyEventsArray);
+    weeklyEventsModel.insertMany(weeklyEventsArray);
+
+    await browser.close();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
 
 grabWeeklyEvents();
+
 // cron.schedule('*/60 * * * * *', grabWeeklyEvents);
