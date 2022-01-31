@@ -1,9 +1,3 @@
-/* fonts */
-@font-face {
-  font-family: DIVERSITY;
-  src: url("./fonts/DIVERSITY.woff");
-}
-
 body {
   display: flex;
   justify-content: center;
