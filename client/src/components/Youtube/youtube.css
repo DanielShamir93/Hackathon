@@ -1,5 +1,8 @@
-.youtubeBox{
-    width : 400px ; 
-    height:200px;
-    background-color: red;
+.youtubeBox {
+  width: 400px;
+  height: 200px;
+  background-color: red;
+  position: absolute;
+  top: 0;
+  left: 0;
 }

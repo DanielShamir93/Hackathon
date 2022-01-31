@@ -34,13 +34,13 @@ const Card = ({ title, countries, summery }) => {
 
   return (
     <div className="card">
-      <div className="card--top">
+      {/* <div className="card--top"> */}
         <div className="card--txt">
           <h1 className="card--title">{title}</h1>
           <h4 className="card--subtitle">{displayCountries()}</h4>
         </div>
-        <Youtube keyword={title} />
-      </div>
+        {/* <Youtube keyword={title} />
+      </div> */}
       <p className="card--summery">
         {txtToShow}
         {isLonger && (
