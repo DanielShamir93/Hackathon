@@ -20,7 +20,6 @@ class Youtube extends React.Component {
         },
       });
       const videoId = res.data.items[0].id.videoId;
-      //  console.log(res.data.items[0].id.videoId)
       return videoId;
     } catch (error) {
       return error;
