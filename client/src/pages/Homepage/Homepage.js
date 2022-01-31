@@ -8,6 +8,11 @@ import myApi from "../../api/api";
 function Homepage() {
   const [holiday, setHoliday] = useState([]);
   const [dateArr, setDateArr] = useState([]);
+  const [day, setDay] = useState([]);
+  const [title, setTitle] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [summery, setSummery] = useState("");
+  const [isShow, setIsShow] = useState(false);
   const [text, setText] = useState("Card");
 
   useEffect(() => {
@@ -29,11 +34,11 @@ function Homepage() {
   }, []);
 
   useEffect(() => {
-    const dataArr = [];
+    const data = [];
     let dateObj = {};
     holiday.forEach((item) => {
-      if (dateObj[item.fullDate.day]) {
-        dateObj.item.fullDate.day.push({
+      if (dateObj.day === item.fullDate.day && item.content.wiki.summery) {
+        dateObj.holidays.push({
           summery: item.content.wiki.summery,
           fullDate: item.fullDate,
           title: item.title,
@@ -41,11 +46,12 @@ function Homepage() {
         });
       }
       else if (Object.keys(dateObj).length !== 0){
-        dataArr.push(dateObj);
+        data.push(dateObj);
         dateObj = {};
       }
-      if (Object.keys(dateObj).length === 0) {
-        dateObj.item.fullDate.day = [
+      if (Object.keys(dateObj).length === 0  && item.content.wiki.summery) {
+        dateObj.day = item.fullDate.day;
+        dateObj.holidays = [
           {
             summery: item.content.wiki.summery,
             fullDate: item.fullDate,
@@ -56,33 +62,63 @@ function Homepage() {
       }
     });
 
-    setDateArr(dataArr);
+    // console.log(data[0].holidays);
 
+    setDateArr(data);
+    console.log(data, data.length);
+    if (data.length) {
+      setDay([data[0].holidays]);
+      setTitle(data[0].holidays[0].title);
+      setCountries(data[0].holidays[0].countries);
+      setSummery(data[0].holidays[0].summery);
+      console.log(day);
+    }
+    // console.log(data[0]);
+    // const today = data[0].holidays;
+    // console.log(today);
+    // setDay();
+    // console.log(day);
+    // if (data[0].holiday) {
+    //   console.log(data[0].holiday);
+
+    // }
+  
     // return () => {
     //   second;
     // };
   }, [holiday]);
 
   const handleClick = (event) => {
-    setText(`we clicked on ${event}`);
-    console.log(`we clicked on ${event}`);
+    console.log(event);
+    setTitle(event.title);
+    setCountries(event.countries);
+    setSummery(event.summery);
   };
 
   const handleClickDate = (idx) => {
-    // dataArr[idx]
-    console.log(`we clicked on ${dateArr[idx]}`);
+    console.log(dateArr[idx].holidays);
+    setDay([dateArr[idx].holidays]);
+    setTitle(dateArr[idx].holidays[0].title);
+    setCountries(dateArr[idx].holidays[0].countries);
+    setSummery(dateArr[idx].holidays[0].summery);
+
   };
 
   const displayHoliday = () => {
-    return holiday.map((item) => {
-      return (
-        <Button
-          handleClick={() => handleClick(item.event)}
-          btnText={item.event}
-          classBtn="holiday"
-        />
-      );
-    });
+    // console.log(day);
+    if (day.length) {
+      console.log(day);
+      return day[0].map((item) => {
+        console.log(item);
+        return (
+          <Button
+            handleClick={() => handleClick(item)}
+            btnText={item.title}
+            classBtn="holiday"
+          />
+        );
+      });
+    }
   };
 
   const displayDates = () => {
@@ -111,57 +147,10 @@ function Homepage() {
       <div className="week-dates">{displayDates()}</div>
       <div className="info">
         <div className="holidays">{displayHoliday()}</div>
-        <Card text={text} />
+        <Card title={title} countries={countries} summery={summery} />
       </div>
     </div>
   );
 }
 
 export default Homepage;
-
-/**
- * const weeklyEventsSchema = new mongoose.Schema({
-  fullDate: {
-    date: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    day: {
-      type: String,
-      required: true,
-      trim: true
-    },
-  },
-  title: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  countries: {
-    type: [],
-    default: ["International"],
-    trim: true
-  },
-  content: {
-    wiki: {
-      summery: {
-        type: String,
-        required: true,
-        trim: true
-      },
-      url: {
-        type: String,
-        required: true,
-        trim: true
-      }
-    },
-    youtubeUrl: {
-      type: String,
-      // required: true,
-      trim: true
-    }
-  }
-});
-
- */

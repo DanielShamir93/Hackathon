@@ -1,13 +1,75 @@
+/* fonts */
+@font-face {
+  font-family: DIVERSITY;
+  src: url("../../fonts/DIVERSITY.woff2");
+}
+
+@font-face {
+  font-family: "Lobster", cursive;
+  src: url("../../fonts/Lobster-Regular.ttf");
+}
+
 .card {
-  width: 80%;
+  width: 65%;
   height: 70vmin;
+  /* min-height: 70vmin; */
   overflow: hidden;
-  margin: 1rem;
+  /* margin: 1rem; */
   box-shadow: 5px 5px 20px gray;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(245, 245, 245, 0.726);
+  background: rgba(245, 245, 245, 0.801);
+}
+
+.card--txt {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  margin: 1rem;
+  height: 100%;
+}
+
+.card--top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.card--title {
+  font-size: 4rem;
+  font-family: DIVERSITY;
+  text-align: center;
+}
+
+.card--subtitle {
+  font-size: 2.5rem;
+  font-family: "Lobster", cursive;
+  padding-bottom: 1rem;
+  text-align: center;
+}
+
+.card--summery {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  font-family: "Lobster", cursive;
+  height: 53%;
+  overflow-y: scroll;
+  padding: 2rem;
+}
+
+.show-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: blue;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 1rem;
 }
